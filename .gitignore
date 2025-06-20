@@ -1,0 +1,17 @@
+# Diretório de dados persistentes do MinIO
+minio-data/
+
+# Caches do Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Arquivos temporários e de log
+*.log
+*.tmp
+*.swp
+*.bak
+
+# Dados temporários de imagens (se armazenar local antes do upload)
+*.jpg
+/tmp/*.jpg
