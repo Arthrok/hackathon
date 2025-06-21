@@ -297,7 +297,9 @@ if __name__ == "__main__":
             continue
         
         # Dictionary to store scores for this image
-        image_scores = {'img_path': img_name}
+        # Extract only the filename without the path
+        filename_only = os.path.basename(img_name)
+        image_scores = {'img_path': filename_only}
         all_scores_valid = True
         
         # Process each perception dimension
