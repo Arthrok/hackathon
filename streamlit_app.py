@@ -39,7 +39,7 @@ def load_safety_data():
         ui.longitude,
         s.safety_total_score
     FROM urban_images ui
-    INNER JOIN score s ON ui.place_id = s.img_path::uuid
+    INNER JOIN score s ON ui.place_id = s.img_path
     WHERE ui.latitude IS NOT NULL 
     AND ui.longitude IS NOT NULL 
     AND s.safety_total_score IS NOT NULL
