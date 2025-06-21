@@ -1,29 +1,31 @@
-# 🏙️ Urban Image Collector
+# Criminologia Ambiental
 
-Projeto para coletar imagens urbanas de locais movimentados no Distrito Federal utilizando a API do Mapillary, armazenando-as no MinIO e registrando metadados no PostgreSQL.
-
-## 🚀 Requisitos
-
-- Docker + Docker Compose  
-- Python 3.10+  
-- Conta na [Mapillary](https://www.mapillary.com/) para obter o token de acesso
+Projeto para coletar imagens urbanas de locais movimentados no Distrito Federal utilizando a API do Mapillary, armazenando-as no MinIO, registrando metadados no PostgreSQL e classificando as imagens com base na percepção urbana.
 
 ---
 
-## ⚙️ Instalação
+## Requisitos
+
+* Docker + Docker Compose
+* Python 3.10+
+* Conta na [Mapillary](https://www.mapillary.com/) para obter o token de acesso
+
+---
+
+## Instalação
 
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repo.git
-cd seu-repo
+git clone https://github.com/Arthrok/hackathon.git
+cd hackathon
 ```
 
 ### 2. Crie o ambiente virtual
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # No Windows: venv\\Scripts\\activate
+source venv/bin/activate  # No Windows: venv\Scripts\activate
 ```
 
 ### 3. Instale as dependências
@@ -36,7 +38,7 @@ pip install -r requirements.txt
 
 Crie um arquivo `.env` na raiz com o seguinte conteúdo:
 
-```
+```bash
 # Mapillary
 MAPILLARY_ACCESS_TOKEN=MLY|...seu_token...
 
@@ -62,12 +64,12 @@ MINIO_BUCKET=images
 docker-compose up -d
 ```
 
-- MinIO Console: http://localhost:9001  
-- PostgreSQL: acessível na porta 5432 com os dados do `.env`
+* MinIO Console: [http://localhost:9001](http://localhost:9001)
+* PostgreSQL: acessível na porta `5432` com os dados do `.env`
 
 ---
 
-## 🏗️ Executando o script principal
+## Executando o script principal
 
 ```bash
 python map.py
@@ -75,30 +77,71 @@ python map.py
 
 O script irá:
 
-1. Buscar coordenadas urbanas via Overpass  
-2. Baixar imagens da região com a API do Mapillary  
-3. Salvar as imagens no MinIO  
-4. Armazenar os metadados no PostgreSQL
+1. Buscar coordenadas urbanas via Overpass
+2. Baixar imagens da região com a API do Mapillary
+3. Salvar as imagens no MinIO
+4. Armazenar os metadados no PostgreSQL (tabela `urban_images`)
+
+---
+
+## Classificação das Imagens com Place Pulse
+
+Após a extração das imagens, realizamos a **classificação de percepção urbana** utilizando o repositório:
+
+🔗 [strawmelon11/human-perception-place-pulse](https://github.com/strawmelon11/human-perception-place-pulse)
+
+Este repositório implementa modelos treinados com a base de dados **Place Pulse 2.0**, permitindo avaliar atributos como:
+
+* Segurança (`safety`)
+* Dinamicidade (`lively`)
+* Riqueza (`wealthy`)
+
+### Fluxo de Classificação
+
+1. Extração das imagens (via Mapillary)
+2. Classificação com o modelo Place Pulse
+3. Geração dos scores
+4. Atualização dos scores na tabela `score` no PostgreSQL
+5. Visualização dos resultados na interface Streamlit
+
+A classificação é feita localmente. Os scores são vinculados ao `place_id` de cada imagem.
+
+---
+
+## 📊 Visualização com Streamlit
+
+Utilizamos uma aplicação em **Streamlit** para exibir os scores em um mapa interativo.
+
+```bash
+streamlit run streamlit_app.py
+```
 
 ---
 
 ## 📁 Estrutura
 
-```
+```bash
 .
+├── human-perception-place-pulse/   # Modelo Place Pulse para classificação
 ├── .env
-├── docker-compose.yml
+├── .gitignore
+├── Dockerfile                      # Dockerização da aplicação Streamlit
+├── README.md
+├── calculate_safety_score.py       # Script para gerar scores e heatmaps
+├── database.py
+├── docker-compose.yaml
 ├── map.py
 ├── overpass.py
-├── storage.py
-├── database.py
 ├── requirements.txt
-└── README.md
+├── storage.py
+└── streamlit_app.py                # Aplicação Streamlit para visualização
 ```
 
 ---
 
-## ✅ Resultado
+## Resultado Esperado
 
-- Imagens armazenadas no bucket `images` no MinIO  
-- Metadados registrados na tabela `urban_images` no PostgreSQL
+* Imagens armazenadas no bucket `images` do MinIO
+* Metadados salvos na tabela `urban_images`
+* Scores de percepção urbana salvos na tabela `score`
+* Interface interativa em Streamlit exibindo os resultados
