@@ -4,3 +4,10 @@ minio
 sqlalchemy
 psycopg2-binary
 dotenv
+streamlit
+pydeck
+pandas
+sqlalchemy
+psycopg2-binary
+python-dotenv
+plotly
