@@ -175,7 +175,7 @@ def create_heatmap(df, zoom_level=10):
     
     # Criar deck
     deck = pdk.Deck(
-        map_style="mapbox://styles/mapbox/light-v9",
+        map_style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         initial_view_state=view_state,
         layers=[heatmap_layer, scatter_layer],
         tooltip={
