@@ -14,11 +14,15 @@ O score é calculado usando média ponderada com foco em segurança:
 O resultado final é normalizado para escala 0-10.
 """
 
+import sys
 import os
 import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, Table, Column, MetaData, String, Float, text
 from sqlalchemy.dialects.postgresql import insert
+
+# Adicionar o diretório pai ao path para importar os módulos
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Carregar variáveis de ambiente
 load_dotenv()

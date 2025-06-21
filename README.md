@@ -72,7 +72,7 @@ docker-compose up -d
 ## Executando o script principal
 
 ```bash
-python map.py
+python3 app/map.py
 ```
 
 O script irá:
@@ -81,6 +81,18 @@ O script irá:
 2. Baixar imagens da região com a API do Mapillary
 3. Salvar as imagens no MinIO
 4. Armazenar os metadados no PostgreSQL (tabela `urban_images`)
+
+### Executando scripts de processamento
+
+Para calcular os scores de segurança:
+```bash
+python3 scripts/calculate_safety_score.py
+```
+
+Para reclassificar regiões:
+```bash
+python3 scripts/reclassificacao.py
+```
 
 ---
 
@@ -113,7 +125,12 @@ A classificação é feita localmente. Os scores são vinculados ao `place_id` d
 Utilizamos uma aplicação em **Streamlit** para exibir os scores em um mapa interativo.
 
 ```bash
-streamlit run streamlit_app.py
+streamlit run app/streamlit_app.py
+```
+
+Ou alternativamente, você pode executar usando python3:
+```bash
+python3 -m streamlit run app/streamlit_app.py
 ```
 
 ---
@@ -122,19 +139,39 @@ streamlit run streamlit_app.py
 
 ```bash
 .
-├── human-perception-place-pulse/   # Modelo Place Pulse para classificação
-├── .env
+├── app/                             # Código relacionado ao Streamlit
+│   ├── streamlit_app.py
+│   ├── map.py
+│   └── requirements.txt
+│
+├── model/                           # Modelo Place Pulse para classificação
+│   └── human-perception-place-pulse/
+│
+├── scripts/                         # Scripts de processamento
+│   ├── calculate_safety_score.py
+│   ├── overpass.py
+│   ├── reclassificacao.py
+│   └── regioes_coordenadas.py
+│
+├── utils/                           # Utilitários gerais e auxiliares
+│   ├── database.py
+│   └── storage.py
+│
+├── docker/
+│   ├── Dockerfile                   # Dockerização da aplicação Streamlit
+│   └── docker-compose.yaml
+│
+├── coordenadas_poligonais/
+│   ├── construcao_base_geojson.py
+│   ├── regioes_df.geojson
+│   └── regioes_ra_df.geojson
+│
+├── .env.example
 ├── .gitignore
-├── Dockerfile                      # Dockerização da aplicação Streamlit
-├── README.md
-├── calculate_safety_score.py       # Script para gerar scores e heatmaps
-├── database.py
 ├── docker-compose.yaml
-├── map.py
-├── overpass.py
+├── Dockerfile
 ├── requirements.txt
-├── storage.py
-└── streamlit_app.py                # Aplicação Streamlit para visualização
+└── README.md
 ```
 
 ---

@@ -1,12 +1,16 @@
+import sys
 import os
 import uuid
 import time
 import requests
 from dotenv import load_dotenv
 
-from overpass import get_coordenadas
-from storage import upload_imagem
-from database import criar_tabela, salvar_registro
+# Adicionar o diretório pai ao path para importar os módulos
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from scripts.overpass import get_coordenadas
+from utils.storage import upload_imagem
+from utils.database import criar_tabela, salvar_registro
 
 load_dotenv()
 access_token = os.getenv("MAPILLARY_ACCESS_TOKEN")

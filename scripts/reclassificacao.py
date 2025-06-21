@@ -1,13 +1,18 @@
+import sys
 import os
 import uuid
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, Table, Column, MetaData, String, Float, select
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from regioes_coordenadas import get_ra_por_coordenada
 import geopandas as gpd
 
+# Adicionar o diretório pai ao path para importar os módulos
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from scripts.regioes_coordenadas import get_ra_por_coordenada
+
 # Importar as funções necessárias do database.py
-from database import obter_todos_registros, criar_tabela_com_regioes
+from utils.database import obter_todos_registros, criar_tabela_com_regioes
 
 # Carregar variáveis de ambiente
 load_dotenv()

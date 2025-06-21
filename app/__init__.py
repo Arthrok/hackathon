@@ -1,0 +1,1 @@
+"""Módulo da aplicação Streamlit"""

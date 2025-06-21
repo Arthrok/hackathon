@@ -1,3 +1,4 @@
+import sys
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -7,6 +8,9 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 import plotly.express as px
 import plotly.graph_objects as go
+
+# Adicionar o diretório pai ao path para importar os módulos
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Configurar a página
 st.set_page_config(
