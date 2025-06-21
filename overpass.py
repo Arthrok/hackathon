@@ -58,3 +58,60 @@ def get_coordenadas():
             coordenadas.append((element["lat"], element["lon"]))
 
     return random.sample(coordenadas, min(20, len(coordenadas)))
+
+def get_regiao_administrativa(lat, lon):
+    """
+    Determina a região administrativa com base nas coordenadas fornecidas.
+    
+    Args:
+        lat (float): Latitude
+        lon (float): Longitude
+    
+    Returns:
+        str: Nome da região administrativa ou "Região não identificada"
+    """
+    overpass_url = "https://overpass-api.de/api/interpreter"
+    
+    query = f"""
+    [out:json][timeout:30];
+    (
+      is_in({lat}, {lon});
+      area._["name"]["admin_level"];
+    );
+    out tags;
+    """
+    
+    try:
+        response = requests.post(overpass_url, data={"data": query})
+        data = response.json()
+        
+        # Lista das regiões administrativas do DF
+        regioes_df = [
+            "Brasília", "Gama", "Taguatinga", "Ceilândia", "Samambaia",
+            "Planaltina", "Paranoá", "Núcleo Bandeirante", "Sobradinho",
+            "Sobradinho II", "Recanto das Emas", "Riacho Fundo",
+            "Riacho Fundo II", "Lago Norte", "Lago Sul", "Candangolândia",
+            "Santa Maria", "São Sebastião", "Cruzeiro", "Sudoeste/Octogonal",
+            "Varjão", "Park Way", "SCIA", "SIA", "Vicente Pires", "Fercal"
+        ]
+        
+        # Procura pela região administrativa nas tags retornadas
+        for element in data.get("elements", []):
+            tags = element.get("tags", {})
+            name = tags.get("name", "")
+            
+            # Verifica se o nome corresponde a uma região administrativa do DF
+            if name in regioes_df:
+                return name
+                
+            # Verifica correspondências parciais (para casos como "Sudoeste/Octogonal")
+            for regiao in regioes_df:
+                if regiao.lower() in name.lower() or name.lower() in regiao.lower():
+                    return regiao
+        
+        return "Região não identificada"
+        
+    except Exception as e:
+        print(f"Erro ao consultar região administrativa: {e}")
+        return "Erro na consulta"
+

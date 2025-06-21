@@ -15,3 +15,5 @@ __pycache__/
 # Dados temporários de imagens (se armazenar local antes do upload)
 *.jpg
 /tmp/*.jpg
+
+.env
