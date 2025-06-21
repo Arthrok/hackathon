@@ -1,0 +1,10 @@
+pandas
+Pillow
+torch
+torchvision
+huggingface_hub 
+transformers
+minio
+python-dotenv
+sqlalchemy
+psycopg2-binary 
