@@ -2,6 +2,8 @@
 
 Projeto para coletar imagens urbanas de locais movimentados no Distrito Federal utilizando a API do Mapillary, armazenando-as no MinIO, registrando metadados no PostgreSQL e classificando as imagens com base na percepção urbana.
 
+🔗 **Visualização Interativa**: [criminologia-ambiental.arthrok.shop](https://criminologia-ambiental.arthrok.shop/)
+
 ---
 
 ## Requisitos
@@ -69,7 +71,11 @@ docker-compose up -d
 
 ---
 
-## Executando o script principal
+## 🚀 Fluxo de Execução
+
+Execute os scripts na ordem abaixo:
+
+### 1. Extração de coordenadas e imagens
 
 ```bash
 python map.py
@@ -77,40 +83,38 @@ python map.py
 
 O script irá:
 
-1. Buscar coordenadas urbanas via Overpass
-2. Baixar imagens da região com a API do Mapillary
-3. Salvar as imagens no MinIO
-4. Armazenar os metadados no PostgreSQL (tabela `urban_images`)
+* Buscar coordenadas urbanas via Overpass
+* Baixar imagens da região com a API do Mapillary
+* Salvar as imagens no MinIO
+* Armazenar metadados no PostgreSQL (tabela `urban_images`)
 
----
+### 2. Classificação das imagens
 
-## Classificação das Imagens com Place Pulse
+```bash
+python eval.py
+```
 
-Após a extração das imagens, realizamos a **classificação de percepção urbana** utilizando o repositório:
-
-🔗 [strawmelon11/human-perception-place-pulse](https://github.com/strawmelon11/human-perception-place-pulse)
-
-Este repositório implementa modelos treinados com a base de dados **Place Pulse 2.0**, permitindo avaliar atributos como:
+Esse script realiza a classificação das imagens usando o modelo Place Pulse, gerando scores para os atributos urbanos:
 
 * Segurança (`safety`)
 * Dinamicidade (`lively`)
 * Riqueza (`wealthy`)
 
-### Fluxo de Classificação
+Os scores são salvos na tabela `score` no PostgreSQL, associados ao `place_id` das imagens.
 
-1. Extração das imagens (via Mapillary)
-2. Classificação com o modelo Place Pulse
-3. Geração dos scores
-4. Atualização dos scores na tabela `score` no PostgreSQL
-5. Visualização dos resultados na interface Streamlit
+### 3. Cálculo do Score Final e Heatmaps
 
-A classificação é feita localmente. Os scores são vinculados ao `place_id` de cada imagem.
+```bash
+python calculate_safety_score.py
+```
+
+Este script gera scores agregados e visualizações como heatmaps, atualizando e consolidando os dados para visualização.
 
 ---
 
 ## 📊 Visualização com Streamlit
 
-Utilizamos uma aplicação em **Streamlit** para exibir os scores em um mapa interativo.
+Utilizamos uma aplicação **Streamlit** para exibir os resultados de forma interativa:
 
 ```bash
 streamlit run streamlit_app.py
@@ -123,6 +127,7 @@ streamlit run streamlit_app.py
 ```bash
 .
 ├── human-perception-place-pulse/   # Modelo Place Pulse para classificação
+├── coordenadas_poligonais/
 ├── .env
 ├── .gitignore
 ├── Dockerfile                      # Dockerização da aplicação Streamlit
@@ -130,8 +135,8 @@ streamlit run streamlit_app.py
 ├── calculate_safety_score.py       # Script para gerar scores e heatmaps
 ├── database.py
 ├── docker-compose.yaml
-├── map.py
-├── overpass.py
+├── map.py                          # Script de extração inicial de imagens e coordenadas
+├── overpass.py                     # Integração com Overpass API
 ├── requirements.txt
 ├── storage.py
 └── streamlit_app.py                # Aplicação Streamlit para visualização
