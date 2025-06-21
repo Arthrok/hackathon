@@ -104,12 +104,17 @@ def create_heatmap(df, zoom_level=10):
     # Converter DataFrame para lista de dicionários com tipos Python nativos
     data_list = []
     for _, row in df_clean.iterrows():
+        lat = float(row['latitude'])
+        lon = float(row['longitude'])
         data_list.append({
-            'latitude': float(row['latitude']),
-            'longitude': float(row['longitude']),
+            'latitude': lat,
+            'longitude': lon,
             'safety_total_score': float(row['safety_total_score']),
             'place_name': str(row['place_name']) if pd.notna(row['place_name']) else 'Local desconhecido',
-            'place_id': str(row['place_id']) if pd.notna(row['place_id']) else ''
+            'place_id': str(row['place_id']) if pd.notna(row['place_id']) else '',
+            'lat_formatted': f"{lat:.4f}",
+            'lon_formatted': f"{lon:.4f}",
+            'score_formatted': f"{float(row['safety_total_score']):.2f}"
         })
     
     # Adicionar peso invertido para o heatmap (score baixo = maior risco = mais vermelho)
@@ -180,8 +185,8 @@ def create_heatmap(df, zoom_level=10):
         layers=[heatmap_layer, scatter_layer],
         tooltip={
             "html": "<b>Local:</b> {place_name}<br/>"
-                   "<b>Score de Segurança:</b> {safety_total_score}<br/>"
-                   "<b>Coordenadas:</b> ({latitude:.4f}, {longitude:.4f})",
+                   "<b>Score de Segurança:</b> {score_formatted}<br/>"
+                   "<b>Coordenadas:</b> ({lat_formatted}, {lon_formatted})",
             "style": {"color": "white", "backgroundColor": "rgba(0,0,0,0.8)"}
         }
     )
